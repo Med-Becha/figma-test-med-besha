@@ -20,8 +20,6 @@ export function HeroSection() {
       <div className="mx-auto px-4 pt-4 sm:px-6 max-h-[714px] sm:pt-6 lg:px-6 lg:pt-6 xl:px-[20px] xl:pt-[20px]">
         {/* Figma: height 714, inset 25px, radius 20px on the top corners only. */}
         <div className="relative isolate overflow-hidden rounded-t-[20px]">
-          {/* Placeholder for the Figma hero photography — replace with the exported
-              resort image (public/images/hero.jpg) and swap this div for next/image. */}
           <div className="absolute inset-0">
             <Image
               src="/images/heroImg.jpg"

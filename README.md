@@ -85,11 +85,11 @@ messages/
 
 ## Notes / next steps
 
-- The hero photography and offer/news card images are CSS gradient
-  placeholders — the actual Figma image assets (`Diapo_Marhaba-Palace_ppol.png`
-  and the offer/news photos) weren't exported. Drop them into `public/images/`
-  and swap the placeholder `<div>`s for `next/image` in `hero-section.tsx`,
-  `special-offers-section.tsx` and `news-section.tsx`.
+- The hero, offer, and news photography are the actual images exported from
+  the Figma file (`public/images/`), wired in via `next/image` in
+  `hero-section.tsx`, `special-offers-section.tsx` and `news-section.tsx`.
+  The special-offers cards currently all reuse `coffe.jpg`; swap in the other
+  two exported offer photos there if/when they're exported.
 - The hero/footer wave uses the exact vector path exported from the design
   (`src/components/wave-divider.tsx`); the footer instance is the same path
   vertically mirrored, matching Figma's `matrix(1, 0, 0, -1, 0, 0)`.
