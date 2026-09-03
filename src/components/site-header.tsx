@@ -18,9 +18,13 @@ export function SiteHeader() {
   // Figma: 91px tall, nav padding 10px 300px, background rgba(255, 255, 255, 0.7)
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface/70 backdrop-blur">
-      <div className="mx-auto flex h-[72px] w-full max-w-[1920px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 xl:h-[91px] xl:px-[300px]">
+      <div className="mx-auto flex h-[72px] w-full max-w-[1320px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 xl:h-[91px] ">
         {/* Figma "logos marhba light": 193 x 71 */}
-        <Link href="/" className="flex shrink-0 items-center" aria-label={t("logoName")}>
+        <Link
+          href="/"
+          className="flex shrink-0 items-center"
+          aria-label={t("logoName")}
+        >
           <Image
             src="/images/logo-marhaba-light.png"
             alt={`${t("logoName")} — ${t("logoTagline")}`}
@@ -36,7 +40,10 @@ export function SiteHeader() {
             addition, so they join the nav group instead of getting their own
             stretch of space. */}
         <div className="flex items-center gap-8 xl:gap-10">
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-7 text-base">
+          <nav
+            aria-label="Primary"
+            className="hidden lg:flex items-center gap-7 text-base"
+          >
             {menuItems.map((n) => (
               <Link
                 key={n}
@@ -64,7 +71,11 @@ export function SiteHeader() {
               aria-expanded={open}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground/80 hover:bg-surface-muted lg:hidden"
             >
-              {open ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
+              {open ? (
+                <X className="h-4.5 w-4.5" />
+              ) : (
+                <Menu className="h-4.5 w-4.5" />
+              )}
             </button>
           </div>
         </div>

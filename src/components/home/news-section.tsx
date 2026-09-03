@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 
 const CARD_GRADIENTS = [
   "from-[#0f2a4a] via-[#1c4a7a] to-[#4d8fd6]",
@@ -148,13 +149,27 @@ export function NewsSection() {
               >
                 <div
                   aria-hidden
-                  className={`absolute inset-0 bg-gradient-to-br ${CARD_GRADIENTS[i % CARD_GRADIENTS.length]} transition-transform duration-500 ${isActive ? "" : "group-hover:scale-105"}`}
-                />
+                  className={`absolute inset-0 transition-transform duration-500 ${
+                    isActive ? "" : "group-hover:scale-105"
+                  }`}
+                >
+                  <Image
+                    src={`/images/news${i + 1}.png`}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1280px) 50vw, 90vw"
+                  />
+                </div>
                 {/* Figma: expanded card is covered top-to-bottom, collapsed cards
                     only from the halfway point down. */}
                 <div
                   aria-hidden
-                  className={`absolute inset-x-0 bottom-0 bg-gradient-to-b from-black/0 to-black/80 ${isActive ? "top-0" : "top-1/2"}`}
+                  className={
+                    isActive
+                      ? "absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80"
+                      : "absolute inset-x-0 bottom-0 top-1/2 bg-gradient-to-b from-black/0 to-black/80"
+                  }
                 />
 
                 <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-6">
