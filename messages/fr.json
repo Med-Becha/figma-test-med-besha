@@ -1,0 +1,121 @@
+{
+  "Metadata": {
+    "title": "Marhaba Palace | Hôtel Royal Court",
+    "description": "Réservez votre séjour à l'hôtel Royal Court — meilleur prix en ligne, paiement sécurisé, tarifs flexibles."
+  },
+  "Theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "toggle": "Changer de thème"
+  },
+  "Language": {
+    "label": "Langue",
+    "select": "Choisir la langue"
+  },
+  "Header": {
+    "logoName": "THANOS",
+    "logoTagline": "Personal Trainer",
+    "menu": "Menu",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "Hero": {
+    "welcomeLabel": "Bienvenue à l'hôtel « Royal Court »",
+    "title": "Ici, vous vous sentirez chez vous.",
+    "badges": {
+      "bestPrice": "Meilleur prix en ligne",
+      "securePayment": "Paiement sécurisé",
+      "flexibleRates": "Tarifs flexibles",
+      "exclusiveOffer": "Offre exclusive"
+    }
+  },
+  "Reservation": {
+    "title": "Réservations",
+    "subtitle": "Hébergement garanti",
+    "checkIn": "Arrivée",
+    "checkOut": "Départ",
+    "guests": "Voyageurs",
+    "guestsSummary": "{rooms, plural, one {# chambre} other {# chambres}}, {adults, plural, one {# adulte} other {# adultes}}",
+    "search": "Rechercher"
+  },
+  "Calendar": {
+    "checkIn": "Arrivée",
+    "checkOut": "Départ",
+    "nights": "{count, plural, one {# nuit} other {# nuits}}",
+    "confirm": "Confirmer",
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant"
+  },
+  "GuestsPicker": {
+    "title": "Voyageurs",
+    "room": "Chambre {n}",
+    "adults": "Adultes",
+    "adultsAge": "12 ans et plus",
+    "children": "Enfants",
+    "childrenAge": "2 à 11 ans",
+    "ageOfChild": "{count, plural, one {Âge de # enfant} other {Âge de # enfants}}",
+    "select": "Choisir",
+    "addRoom": "Ajouter une chambre",
+    "confirm": "Confirmer",
+    "removeRoom": "Supprimer la chambre"
+  },
+  "Offers": {
+    "sectionTitle": "Offres spéciales",
+    "allOffers": "Toutes les offres",
+    "bookNow": "Réserver",
+    "previous": "Offres précédentes",
+    "next": "Offres suivantes",
+    "items": [
+      {
+        "duration": "3 jours · à partir du 30 sept. 2026",
+        "title": "Réservation anticipée en demi-pension",
+        "description": "Réservez tôt et profitez de la demi-pension incluse pendant tout votre séjour au Marhaba Palace."
+      },
+      {
+        "duration": "3 jours · à partir du 30 sept. 2026",
+        "title": "Réservation anticipée hébergement & petit-déjeuner",
+        "description": "Profitez d'une offre de réservation anticipée de 15 % sur votre séjour à Marhaba Beach. Remarque : la taxe de séjour n'est pas incluse dans le montant total…"
+      },
+      {
+        "duration": "3 jours · à partir du 30 sept. 2026",
+        "title": "Réservation anticipée tout compris",
+        "description": "Réservez dès maintenant et économisez sur un séjour tout compris sans aucun souci."
+      }
+    ]
+  },
+  "News": {
+    "sectionTitle": "Actualités",
+    "tag": "Voyage de luxe",
+    "readMore": "Lire la suite",
+    "previous": "Articles précédents",
+    "next": "Articles suivants",
+    "items": [
+      {
+        "title": "Le voyage de luxe en 2025",
+        "description": "Découvrez les tendances qui façonnent l'expérience du voyage de luxe cette année."
+      },
+      {
+        "title": "Comment voyager plus en dépensant moins",
+        "description": "Voyager ne coûte pas forcément cher : avec une bonne organisation, des choix intelligents et quelques astuces d'initiés, vous pouvez découvrir le monde sans vous ruiner."
+      },
+      {
+        "title": "Road trips en Tunisie",
+        "description": "Découvrez-en davantage, kilomètre après kilomètre, le long des plus belles routes côtières de Tunisie."
+      }
+    ]
+  },
+  "Footer": {
+    "accessYourSpace": "Accédez à votre espace",
+    "agentPortal": "Espace agences",
+    "corporatePortal": "Espace entreprises",
+    "menuTitle": "Menu",
+    "menuItems": ["Accueil", "À propos", "Hôtels", "Services", "Offres spéciales", "Actualités", "Contact"],
+    "hotelsTitle": "Hôtels",
+    "hotelsItems": ["Marhaba Palace", "Marhaba Royal Salem", "Marhaba Salem Resort", "Marhaba Beach", "Sentido Bellevue", "Marhaba Thalasso"],
+    "copyright": "© Tous droits réservés | Marhaba Beach",
+    "terms": "Conditions générales",
+    "cancellations": "Annulations",
+    "privacy": "Politique de confidentialité"
+  }
+}

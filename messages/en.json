@@ -1,0 +1,121 @@
+{
+  "Metadata": {
+    "title": "Marhaba Palace | Royal Court Hotel",
+    "description": "Book your stay at the Hotel Royal Court — best online price, secure payment, flexible rates."
+  },
+  "Theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "Language": {
+    "label": "Language",
+    "select": "Select language"
+  },
+  "Header": {
+    "logoName": "THANOS",
+    "logoTagline": "Personal Trainer",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "Hero": {
+    "welcomeLabel": "Welcome to the hotel “Royal Court”",
+    "title": "Here you will feel at home.",
+    "badges": {
+      "bestPrice": "Best online price",
+      "securePayment": "Secure payment",
+      "flexibleRates": "Flexible rates",
+      "exclusiveOffer": "Exclusive offer"
+    }
+  },
+  "Reservation": {
+    "title": "Reservations",
+    "subtitle": "Guaranteed accommodation",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "guests": "Guests",
+    "guestsSummary": "{rooms, plural, one {# room} other {# rooms}}, {adults, plural, one {# adult} other {# adults}}",
+    "search": "Search"
+  },
+  "Calendar": {
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "nights": "{count, plural, one {# night} other {# nights}}",
+    "confirm": "Confirm",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
+  },
+  "GuestsPicker": {
+    "title": "Guests",
+    "room": "Room {n}",
+    "adults": "Adults",
+    "adultsAge": "12+ years",
+    "children": "Children",
+    "childrenAge": "2–11 years",
+    "ageOfChild": "{count, plural, one {Age of # child} other {Age of # children}}",
+    "select": "Select",
+    "addRoom": "Add a room",
+    "confirm": "Confirm",
+    "removeRoom": "Remove room"
+  },
+  "Offers": {
+    "sectionTitle": "Special offers",
+    "allOffers": "All offers",
+    "bookNow": "Book now",
+    "previous": "Previous offers",
+    "next": "Next offers",
+    "items": [
+      {
+        "duration": "3 days · from 30 Sep 2026",
+        "title": "Early Booking Half Board",
+        "description": "Reserve early and enjoy half board included for your entire stay at Marhaba Palace."
+      },
+      {
+        "duration": "3 days · from 30 Sep 2026",
+        "title": "Early Booking Accommodation & Breakfast",
+        "description": "Take advantage of a 15% early booking offer on your stay at the marhaba beach, note: tourist tax: the total amount of th…"
+      },
+      {
+        "duration": "3 days · from 30 Sep 2026",
+        "title": "Early Booking All Inclusive",
+        "description": "Book now and save on an all-inclusive getaway with everything taken care of."
+      }
+    ]
+  },
+  "News": {
+    "sectionTitle": "News",
+    "tag": "Luxury Travel",
+    "readMore": "Read more",
+    "previous": "Previous articles",
+    "next": "Next articles",
+    "items": [
+      {
+        "title": "Luxury Travel in 2025",
+        "description": "Discover the trends shaping the luxury travel experience this year."
+      },
+      {
+        "title": "How to explore more while spending less",
+        "description": "Traveling doesn’t have to be expensive, with the right planning, smart choices, and a bit of insider know-how, you can see the world without breaking the bank."
+      },
+      {
+        "title": "Road trips in Tunisia",
+        "description": "Discover more, mile by mile, along Tunisia’s most scenic coastal routes."
+      }
+    ]
+  },
+  "Footer": {
+    "accessYourSpace": "Access your space",
+    "agentPortal": "Agent portal",
+    "corporatePortal": "Corporate portal",
+    "menuTitle": "Menu",
+    "menuItems": ["Home", "About us", "Hotels", "Services", "Special Offers", "News", "Contact Us"],
+    "hotelsTitle": "Hotels",
+    "hotelsItems": ["Marhaba Palace", "Marhaba Royal Salem", "Marhaba Salem Resort", "Marhaba Beach", "Sentido Bellevue", "Marhaba Thalasso"],
+    "copyright": "© All rights are protected | Marhaba Beach",
+    "terms": "Terms & Conditions",
+    "cancellations": "Cancellations",
+    "privacy": "Privacy Policy"
+  }
+}
