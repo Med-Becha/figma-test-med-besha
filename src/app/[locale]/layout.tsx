@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Montserrat, Unbounded, Lato } from "next/font/google";
+import { Montserrat, Unbounded } from "next/font/google";
 import { routing, localeConfig, type Locale } from "@/i18n/routing";
 import { ThemeProvider } from "@/components/theme-provider";
+import { MotionProvider } from "@/components/motion/motion-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import "../globals.css";
@@ -23,12 +24,8 @@ const unbounded = Unbounded({
   weight: ["400", "600"],
 });
 
-// Wordmark only — matches the Figma logo's Lato 900/300.
-const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["300", "900"],
-});
+// The Figma wordmark (Lato) used to be set in live text; it now ships as the
+// exported logo image, so that font family is no longer downloaded.
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -69,7 +66,7 @@ export default async function LocaleLayout({
       lang={locale}
       dir={dir}
       suppressHydrationWarning
-      className={`${montserrat.variable} ${unbounded.variable} ${lato.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${unbounded.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NextIntlClientProvider>
@@ -85,11 +82,13 @@ export default async function LocaleLayout({
             >
               Skip to content
             </a>
-            <SiteHeader />
-            <main id="main-content" className="flex flex-1 w-full flex-col">
-              {children}
-            </main>
-            <SiteFooter />
+            <MotionProvider>
+              <SiteHeader />
+              <main id="main-content" className="flex flex-1 w-full flex-col">
+                {children}
+              </main>
+              <SiteFooter />
+            </MotionProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

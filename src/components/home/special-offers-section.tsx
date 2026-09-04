@@ -3,8 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { AnimatePresence, m } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import { ScrollCarousel } from "@/components/home/scroll-carousel";
+import { AnimatedText } from "@/components/motion/animated-text";
+import { WavyText } from "@/components/motion/wavy-text";
+import { Reveal } from "@/components/motion/reveal";
 
 type OfferItem = {
   duration: string;
@@ -23,10 +27,9 @@ export function SpecialOffersSection() {
     const root = carouselRef.current;
     if (!root) return;
 
-    // Get the actual scrolling element from ScrollCarousel
-    const track = root.querySelector(
-      ".snap-x.snap-mandatory",
-    ) as HTMLDivElement | null;
+    // The scrolling element owned by ScrollCarousel, matched on a stable data
+    // hook rather than its utility classes.
+    const track = root.querySelector<HTMLDivElement>("[data-carousel-track]");
 
     if (!track) return;
 
@@ -80,34 +83,49 @@ export function SpecialOffersSection() {
         <div ref={carouselRef}>
           <ScrollCarousel
             title={
-              <h2 className="font-display text-[26px] font-normal leading-[38px] text-[#222222] dark:text-foreground sm:text-[36px]">
-                {t("sectionTitle")}
-              </h2>
+              <AnimatedText
+                as="h2"
+                text={t("sectionTitle")}
+                className="font-display text-[26px] font-normal leading-[38px] text-[#222222] dark:text-foreground sm:text-[36px]"
+              />
             }
             previousLabel={t("previous")}
             nextLabel={t("next")}
+            autoPlay
           >
             {items.map((item, i) => {
               const isActive = i === activeIndex;
 
               return (
-                <article
+                <m.article
                   key={item.title}
                   className="group relative h-[300px] w-[85vw] shrink-0 snap-start overflow-hidden rounded-[20px] sm:h-[420px] sm:w-[560px] xl:h-[535px] xl:w-[711px]"
+                  // Entrance is opacity + scale, deliberately not a Y offset:
+                  // `overflow-x-auto` on the track forces `overflow-y: auto`
+                  // too, so a translated card is clipped by the scroller (and
+                  // stays clipped if the in-view trigger hasn't fired yet).
+                  // Scale grows from the centre and can't overflow the box.
+                  initial={{ opacity: 0, scale: 0.94 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {/* Image */}
-                  <div
+                  {/* Image — scales gently toward the viewer on hover */}
+                  <m.div
                     aria-hidden
-                    className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                    className="absolute inset-0"
+                    initial={false}
+                    whileHover={{ scale: 1.06 }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <Image
-                      src="/images/coffe.jpg"
+                      src="/images/coffe.webp"
                       alt=""
                       fill
                       className="object-cover"
                       sizes="(min-width: 1280px) 711px, 85vw"
                     />
-                  </div>
+                  </m.div>
 
                   {/* Gradient */}
                   <div
@@ -116,47 +134,86 @@ export function SpecialOffersSection() {
                   />
 
                   {/* Duration */}
-                  <span className="absolute start-[22px] top-[21px] flex h-8 items-center justify-center rounded-[50px] bg-white px-4 text-[13px] font-semibold uppercase leading-5 text-text-heading">
+                  <m.span
+                    // The pill is white in both themes (it sits on photography),
+                    // so the label keeps the design's dark ink rather than the
+                    // themed heading colour — which goes near-white in dark mode
+                    // and would vanish against the pill.
+                    className="absolute start-[22px] top-[21px] flex h-8 items-center justify-center rounded-[50px] bg-white px-4 text-[13px] font-semibold uppercase leading-5 text-[#212529]"
+                    initial={{ opacity: 0, scale: 0.8, y: -8 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ type: "spring", stiffness: 320, damping: 22, delay: 0.25 + i * 0.12 }}
+                  >
                     {item.duration}
-                  </span>
+                  </m.span>
 
                   {/* Content */}
                   <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-6 xl:ps-[33px] xl:pb-[46px]">
-                    <h3 className="font-display text-[22px] font-semibold leading-[34px] tracking-[-0.78px] text-white sm:text-[28px]">
-                      {item.title}
-                    </h3>
+                    <WavyText
+                      as="h3"
+                      text={item.title}
+                      className="font-display text-[22px] font-semibold leading-[34px] tracking-[-0.78px] text-white sm:text-[28px] [&>span]:justify-start"
+                    />
 
-                    {isActive && (
-                      <>
-                        {item.description && (
-                          <p className="line-clamp-2 text-sm uppercase text-white/80">
-                            {item.description}
-                          </p>
-                        )}
-
-                        <Link
-                          href="/"
-                          className="mt-2 inline-flex h-12 w-fit items-center justify-center rounded-[10px] bg-accent px-4 text-base text-white transition-colors hover:bg-accent-hover"
+                    {/* The active card reveals its blurb + CTA; the others fold
+                        theirs away. Animating grid-template-rows lets the height
+                        transition without hard-coding a pixel value. */}
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <m.div
+                          key="details"
+                          initial={{ opacity: 0, gridTemplateRows: "0fr" }}
+                          animate={{ opacity: 1, gridTemplateRows: "1fr" }}
+                          exit={{ opacity: 0, gridTemplateRows: "0fr" }}
+                          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                          className="grid"
                         >
-                          {t("bookNow")}
-                        </Link>
-                      </>
-                    )}
+                          <div className="flex flex-col gap-2 overflow-hidden">
+                            {item.description && (
+                              <p className="line-clamp-2 text-sm uppercase text-white/80">
+                                {item.description}
+                              </p>
+                            )}
+
+                            <m.div
+                              whileHover={{ scale: 1.04 }}
+                              whileTap={{ scale: 0.97 }}
+                              className="w-fit"
+                              transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                            >
+                              <Link
+                                href="/"
+                                className="mt-2 inline-flex h-12 w-fit items-center justify-center rounded-[10px] bg-accent px-4 text-base text-white transition-colors hover:bg-accent-hover"
+                              >
+                                {t("bookNow")}
+                              </Link>
+                            </m.div>
+                          </div>
+                        </m.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                </article>
+                </m.article>
               );
             })}
           </ScrollCarousel>
         </div>
 
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/"
-            className="rounded-[10px] border border-accent px-8 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent/10"
+        <Reveal className="mt-10 flex justify-center" delay={0.15}>
+          <m.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 400, damping: 22 }}
           >
-            {t("allOffers")}
-          </Link>
-        </div>
+            <Link
+              href="/"
+              className="inline-block rounded-[10px] border border-accent px-8 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+            >
+              {t("allOffers")}
+            </Link>
+          </m.div>
+        </Reveal>
       </div>
     </section>
   );

@@ -81,7 +81,69 @@ body {
   color: var(--foreground);
 }
 
-/* Smooth theme transition */
+/*
+ * Per-letter wave for headings.
+ *
+ * Driven by CSS rather than a JS animation per letter: a long title across
+ * three cards is ~110 glyphs, and that many JavaScript-driven loops visibly
+ * stutters. As a keyframe animation the compositor owns it — no per-frame JS,
+ * and the stagger comes free from a negative `animation-delay`.
+ *
+ * `will-change` is deliberately NOT set: promoting 110 spans to their own
+ * compositor layers costs far more than it saves.
+ */
+@keyframes letter-wave {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0);
+  }
+  27% {
+    transform: translateY(calc(var(--wave-jump, 6px) * -1));
+  }
+}
+
+.wave-letter {
+  display: inline-block;
+  white-space: pre;
+  animation: letter-wave var(--wave-duration, 2.6s) ease-in-out infinite;
+}
+
+/* Letters drop into place once, then hand over to the looping wave. */
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.55em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * Two animations on one element: the entrance runs first, and the wave is
+ * delayed past it. Because a delayed animation with no fill-mode contributes
+ * nothing before it starts, the entrance owns `transform` until it finishes;
+ * afterwards the wave — later in the list — takes over.
+ */
+.wave-letter--enter {
+  animation:
+    letter-in var(--enter-duration, 0.6s) cubic-bezier(0.22, 1, 0.36, 1) both,
+    letter-wave var(--wave-duration, 2.6s) ease-in-out infinite;
+}
+
+/* Stop the loop once the heading scrolls away. */
+[data-wave="paused"] .wave-letter {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-letter {
+    animation: none;
+  }
+}
+
 html {
   color-scheme: light;
 }
@@ -90,9 +152,11 @@ html.dark {
   color-scheme: dark;
 }
 
-* {
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-}
+/*
+ * Note: there is deliberately no universal `* { transition: ... }` rule here.
+ * It reads as a convenient way to soften theme changes, but it makes the style
+ * engine track transitions on every node in the document — including the ~24
+ * per-letter spans each animated heading generates. Components that need a
+ * colour transition declare `transition-colors` themselves, and theme switching
+ * is instant by design (`disableTransitionOnChange` on ThemeProvider).
+ */

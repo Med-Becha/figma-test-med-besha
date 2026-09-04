@@ -3,14 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, m } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-
-const CARD_GRADIENTS = [
-  "from-[#0f2a4a] via-[#1c4a7a] to-[#4d8fd6]",
-  "from-[#3a3222] via-[#6b5c3a] to-[#c6b25c]",
-  "from-[#1a2e28] via-[#2f5c4a] to-[#5cc6a1]",
-];
+import { AnimatedText } from "@/components/motion/animated-text";
+import { WavyText } from "@/components/motion/wavy-text";
+import { useAutoAdvance } from "@/lib/use-auto-advance";
 
 // Card widths come from the Figma dev-mode inspector (Frame 2087329366):
 // card 1 (collapsed) 328px, card 2 (expanded/center) 582px, card 3 (collapsed) 350px,
@@ -94,37 +92,58 @@ export function NewsSection() {
     goToCard(next);
   }
 
+  // Cycles the expanded card while the visitor is idle; pauses on hover, focus,
+  // manual interaction, off-screen, and for reduced-motion visitors.
+  useAutoAdvance({
+    ref: trackRef,
+    interval: 6000,
+    onAdvance: () => goToCard((activeIndex + 1) % items.length),
+  });
+
   return (
     <section className="bg-surface-muted py-16 lg:py-20 xl:py-[60px]">
       <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-10 xl:px-[300px]">
         <div className="relative mb-6 flex items-center justify-center">
-          <h2 className="font-display text-[28px] font-semibold text-text-heading">
-            {t("sectionTitle")}
-          </h2>
+          <AnimatedText
+            as="h2"
+            text={t("sectionTitle")}
+            className="font-display text-[28px] font-semibold text-text-heading"
+          />
           <div className="absolute end-0 flex shrink-0 items-center gap-2">
-            <button
+            <m.button
               type="button"
               aria-label={t("previous")}
               onClick={() => scrollByStep(-1)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground/60 transition-colors hover:bg-surface hover:text-foreground"
+              disabled={activeIndex === 0}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 18 }}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground/60 transition-colors hover:bg-surface hover:text-foreground disabled:pointer-events-none disabled:opacity-35"
             >
               <ChevronLeft className="h-4.5 w-4.5 rtl:rotate-180" />
-            </button>
-            <button
+            </m.button>
+            <m.button
               type="button"
               aria-label={t("next")}
               onClick={() => scrollByStep(1)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground/60 transition-colors hover:bg-surface hover:text-foreground"
+              disabled={activeIndex === items.length - 1}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 18 }}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground/60 transition-colors hover:bg-surface hover:text-foreground disabled:pointer-events-none disabled:opacity-35"
             >
               <ChevronRight className="h-4.5 w-4.5 rtl:rotate-180" />
-            </button>
+            </m.button>
           </div>
         </div>
 
-        <div
+        {/* The expanded column is animated as a grid-template-columns spring, so
+            all three cards resize together in one interpolation rather than each
+            fighting for width. */}
+        <m.div
           ref={trackRef}
-          className="grid gap-6 overflow-hidden py-2 transition-[grid-template-columns] duration-300 ease-out"
-          style={{
+          className="grid gap-6 overflow-hidden py-2"
+          animate={{
             gridTemplateColumns:
               activeIndex === 0
                 ? "1fr 0.56fr 0.56fr"
@@ -132,18 +151,29 @@ export function NewsSection() {
                   ? "0.56fr 1fr 0.56fr"
                   : "0.56fr 0.56fr 1fr",
           }}
+          transition={{ type: "spring", stiffness: 200, damping: 30 }}
         >
           {items.map((item, i) => {
             const isActive = i === activeIndex;
             return (
-              <article
+              <m.article
                 key={item.title}
-                ref={(el) => {
+                ref={(el: HTMLElement | null) => {
                   cardRefs.current[i] = el;
                 }}
                 onClick={() => !isActive && goToCard(i)}
+                // Scale rather than a Y offset — the track clips overflow, so a
+                // translated card would be cut off before the entrance runs.
+                initial={{ opacity: 0, scale: 0.94 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.65,
+                  delay: i * 0.12,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
                 className={[
-                  "group relative min-w-0 h-[420px] snap-start overflow-hidden rounded-[20px] transition-all duration-300 ease-out sm:h-[480px] xl:h-[535px]",
+                  "group relative min-w-0 h-[420px] snap-start overflow-hidden rounded-[20px] sm:h-[480px] xl:h-[535px]",
                   isActive ? "cursor-default" : "cursor-pointer",
                 ].join(" ")}
               >
@@ -154,11 +184,12 @@ export function NewsSection() {
                   }`}
                 >
                   <Image
-                    src={`/images/news${i + 1}.png`}
+                    src={`/images/news${i + 1}.webp`}
                     alt=""
                     fill
                     className="object-cover"
-                    sizes="(min-width: 1280px) 50vw, 90vw"
+                    // Widest a card ever renders is the 582px expanded state.
+                    sizes="(min-width: 1280px) 582px, (min-width: 640px) 45vw, 90vw"
                   />
                 </div>
                 {/* Figma: expanded card is covered top-to-bottom, collapsed cards
@@ -173,30 +204,53 @@ export function NewsSection() {
                 />
 
                 <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-6">
-                  <span className="text-lg leading-[34px] text-white">
+                  <m.span layout="position" className="text-lg leading-[34px] text-white">
                     {t("tag")}
-                  </span>
-                  <h3 className="font-display max-w-[393px] text-2xl font-normal leading-[34px] text-white">
-                    {item.title}
-                  </h3>
-                  {isActive && (
-                    <>
-                      <p className="max-w-[536px] text-lg leading-[22px] lowercase text-white">
-                        {item.description}
-                      </p>
-                      <Link
-                        href="/"
-                        className="mt-2 inline-flex h-12 w-[135px] items-center justify-center rounded-[10px] bg-accent px-4 py-1.5 text-base text-white transition-colors hover:bg-accent-hover"
+                  </m.span>
+                  <WavyText
+                    as="h3"
+                    text={item.title}
+                    className="font-display max-w-[393px] text-2xl font-normal leading-[34px] text-white"
+                    duration={3}
+                    jump={5}
+                  />
+
+                  <AnimatePresence initial={false}>
+                    {isActive && (
+                      <m.div
+                        key="details"
+                        initial={{ opacity: 0, gridTemplateRows: "0fr" }}
+                        animate={{ opacity: 1, gridTemplateRows: "1fr" }}
+                        exit={{ opacity: 0, gridTemplateRows: "0fr" }}
+                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        className="grid"
                       >
-                        {t("readMore")}
-                      </Link>
-                    </>
-                  )}
+                        <div className="flex flex-col gap-2 overflow-hidden">
+                          <p className="max-w-[536px] text-lg leading-[22px] lowercase text-white">
+                            {item.description}
+                          </p>
+                          <m.div
+                            className="w-fit"
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                          >
+                            <Link
+                              href="/"
+                              className="mt-2 inline-flex h-12 w-[135px] items-center justify-center rounded-[10px] bg-accent px-4 py-1.5 text-base text-white transition-colors hover:bg-accent-hover"
+                            >
+                              {t("readMore")}
+                            </Link>
+                          </m.div>
+                        </div>
+                      </m.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </article>
+              </m.article>
             );
           })}
-        </div>
+        </m.div>
       </div>
     </section>
   );

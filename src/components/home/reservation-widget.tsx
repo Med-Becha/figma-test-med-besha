@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { CalendarDays, Search, Users } from "lucide-react";
+import { AnimatePresence, m } from "motion/react";
 import { addDays, formatDate } from "@/lib/date";
 import { useClickOutside } from "@/lib/use-click-outside";
 import { DateRangeCalendar } from "@/components/home/date-range-calendar";
@@ -41,13 +42,20 @@ export function ReservationWidget() {
   }
 
   return (
-    <form
+    <m.form
       onSubmit={handleSearch}
+      initial={{ opacity: 0, y: 48 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="relative z-10 mx-auto -mt-16 w-full max-w-[1320px] rounded-[20px] bg-surface-muted p-5 shadow-xl sm:p-6 lg:-mt-[105px] xl:p-[25px]"
     >
       {/* Figma: inner row 1270x85, 10px gap; fields are white cards on the #F5F5F5 panel */}
       <div className="flex flex-col gap-2.5 lg:flex-row lg:items-stretch">
-        <div className="flex w-full shrink-0 flex-col justify-center gap-[7px] lg:w-[260px]">
+        {/* The Figma widths (260 + 590 + 295 + 95 + gaps) add up to exactly the
+            1320px design column. Left as `flex-none` they overflow — and push
+            the whole page sideways — on any viewport narrower than that, so
+            each is expressed as a flex-basis that may shrink instead. */}
+        <div className="flex w-full min-w-0 flex-col justify-center gap-[7px] lg:w-[260px] lg:shrink">
           <h2 className="font-display text-[24px] font-semibold leading-[30px] text-text-heading">
             {t("title")}
           </h2>
@@ -58,7 +66,7 @@ export function ReservationWidget() {
 
         <div
           ref={datesRef}
-          className="relative flex flex-1 flex-col sm:flex-row xl:w-[590px] xl:flex-none"
+          className="relative flex min-w-0 flex-1 flex-col sm:flex-row xl:basis-[590px]"
         >
           <button
             type="button"
@@ -92,22 +100,30 @@ export function ReservationWidget() {
             <CalendarDays className="h-[30px] w-[30px] shrink-0 text-[#A0A0A0]" aria-hidden />
           </button>
 
-          {open === "dates" && (
-            <div className="absolute start-0 top-full z-20 mt-3">
-              <DateRangeCalendar
-                checkIn={checkIn}
-                checkOut={checkOut}
-                onConfirm={({ checkIn: nextIn, checkOut: nextOut }) => {
-                  setCheckIn(nextIn);
-                  setCheckOut(nextOut);
-                  setOpen(null);
-                }}
-              />
-            </div>
-          )}
+          <AnimatePresence>
+            {open === "dates" && (
+              <m.div
+                className="absolute start-0 top-full z-20 mt-3 origin-top"
+                initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              >
+                <DateRangeCalendar
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  onConfirm={({ checkIn: nextIn, checkOut: nextOut }) => {
+                    setCheckIn(nextIn);
+                    setCheckOut(nextOut);
+                    setOpen(null);
+                  }}
+                />
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <div ref={guestsRef} className="relative flex-1 xl:w-[295px] xl:flex-none">
+        <div ref={guestsRef} className="relative min-w-0 flex-1 xl:basis-[295px] xl:grow-0">
           <button
             type="button"
             onClick={() => setOpen(open === "guests" ? null : "guests")}
@@ -124,31 +140,45 @@ export function ReservationWidget() {
             <Users className="h-[30px] w-[30px] shrink-0 text-[#A0A0A0]" aria-hidden />
           </button>
 
-          {open === "guests" && (
-            <div className="absolute end-0 top-full z-20 mt-3">
-              <GuestsPopover
-                rooms={rooms}
-                onConfirm={(nextRooms) => {
-                  setRooms(nextRooms.length ? nextRooms : makeDefaultRooms());
-                  setOpen(null);
-                }}
-              />
-            </div>
-          )}
+          <AnimatePresence>
+            {open === "guests" && (
+              <m.div
+                className="absolute end-0 top-full z-20 mt-3 origin-top"
+                initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              >
+                <GuestsPopover
+                  rooms={rooms}
+                  onConfirm={(nextRooms) => {
+                    setRooms(nextRooms.length ? nextRooms : makeDefaultRooms());
+                    setOpen(null);
+                  }}
+                />
+              </m.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <button
+        <m.button
           type="submit"
           aria-label={t("search")}
-          className="flex h-[69px] w-full shrink-0 items-center justify-center rounded-[10px] bg-brand text-white transition-colors hover:bg-brand-hover lg:h-auto lg:w-[95px] lg:self-stretch"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 400, damping: 22 }}
+          className="group flex h-[69px] w-full shrink-0 items-center justify-center rounded-[10px] bg-brand text-white transition-colors hover:bg-brand-hover lg:h-auto lg:w-[95px] lg:self-stretch"
         >
           {/* Figma mobile variant: 326x69, uppercase 24px label, no icon */}
           <span className="text-[24px] font-semibold uppercase leading-5 lg:hidden">
             {t("search")}
           </span>
-          <Search className="hidden lg:block lg:h-[30px] lg:w-[30px]" strokeWidth={2.5} />
-        </button>
+          <Search
+            className="hidden transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110 lg:block lg:h-[30px] lg:w-[30px]"
+            strokeWidth={2.5}
+          />
+        </m.button>
       </div>
-    </form>
+    </m.form>
   );
 }

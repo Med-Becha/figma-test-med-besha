@@ -9,6 +9,9 @@ import {
   XIcon,
 } from "@/components/icons/social-icons";
 import { WaveDivider } from "@/components/wave-divider";
+import { Reveal } from "@/components/motion/reveal";
+import { StaggerGroup, StaggerItem } from "@/components/motion/stagger";
+import { Pressable } from "@/components/motion/interactive";
 
 const SOCIALS = [
   { Icon: InstagramIcon, label: "Instagram" },
@@ -38,7 +41,7 @@ export function SiteFooter() {
 
           {/* Fixed Figma column widths only kick in at xl; below that the grid is fluid. */}
           <div className="relative mx-auto grid max-w-[1320px] grid-cols-1 gap-10 px-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8 xl:grid-cols-[238px_178px_303px_auto] xl:gap-x-16 xl:px-[165px]">
-            <div className="flex flex-col gap-6">
+            <Reveal className="flex flex-col gap-6" direction="up">
               {/* Figma footer logo: 72.1px mark + 132.2px wordmark, white */}
               <Link href="/" className="flex items-center" aria-label="THANOS">
                 <Image
@@ -71,24 +74,28 @@ export function SiteFooter() {
                   </Link>
                 </div>
               </div>
-            </div>
+            </Reveal>
 
-            <nav aria-label={t("menuTitle")}>
+            <Reveal as="nav" direction="up" delay={0.08} aria-label={t("menuTitle")}>
               <h3 className="font-display text-[18px] font-normal leading-[120%] tracking-[-0.03em] text-white">
                 {t("menuTitle")}
               </h3>
               <ul className="mt-4 flex flex-col text-[18px] leading-[174%] tracking-[-0.03em] text-white">
                 {menuItems.map((item) => (
                   <li key={item}>
-                    <Link href="/" className="transition-opacity hover:opacity-75">
+                    {/* Nudges toward the reading direction on hover */}
+                    <Link
+                      href="/"
+                      className="inline-block transition-[opacity,transform] duration-200 hover:translate-x-1 hover:opacity-75 rtl:hover:-translate-x-1"
+                    >
                       {item}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </nav>
+            </Reveal>
 
-            <nav aria-label={t("hotelsTitle")}>
+            <Reveal as="nav" direction="up" delay={0.16} aria-label={t("hotelsTitle")}>
               <h3 className="font-display text-[18px] font-normal leading-[120%] tracking-[-0.03em] text-white">
                 {t("hotelsTitle")}
               </h3>
@@ -101,38 +108,47 @@ export function SiteFooter() {
                   </li>
                 ))}
               </ul>
-            </nav>
+            </Reveal>
 
             <div className="flex flex-col gap-6 sm:items-end">
               {/* Figma: 36x36 links, radius 12, first one filled white */}
-              <div className="flex items-center gap-2">
+              <StaggerGroup className="flex items-center gap-2" stagger={0.07}>
                 {SOCIALS.map(({ Icon, label }, i) => (
-                  <a
-                    key={label}
-                    href="#"
-                    aria-label={label}
-                    className={`inline-flex h-9 w-9 items-center justify-center rounded-[12px] p-1.5 transition-colors ${
-                      i === 0
-                        ? "bg-white text-brand-deep hover:bg-white/90"
-                        : "border border-white text-white hover:bg-white/10"
-                    }`}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </a>
+                  <StaggerItem key={label} y={14}>
+                    <Pressable scale={1.15} tapScale={0.9}>
+                      <a
+                        href="#"
+                        aria-label={label}
+                        className={`inline-flex h-9 w-9 items-center justify-center rounded-[12px] p-1.5 transition-colors ${
+                          i === 0
+                            ? "bg-white text-brand-deep hover:bg-white/90"
+                            : "border border-white text-white hover:bg-white/10"
+                        }`}
+                      >
+                        <Icon className="h-6 w-6" />
+                      </a>
+                    </Pressable>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerGroup>
 
               {/* Figma: 58x40 payment tiles, radius 12, 8px gap */}
-              <div className="flex max-w-[246px] flex-wrap gap-2 sm:justify-end" aria-hidden>
+              <StaggerGroup
+                className="flex max-w-[246px] flex-wrap gap-2 sm:justify-end"
+                stagger={0.05}
+                delay={0.1}
+              >
                 {PAYMENT_CARDS.map((card) => (
-                  <span
-                    key={card}
-                    className="flex h-10 w-[58px] items-center justify-center rounded-[12px] bg-white/80 text-[10px] font-bold tracking-wide text-brand-deep"
-                  >
-                    {card}
-                  </span>
+                  <StaggerItem key={card} y={10}>
+                    <span
+                      aria-hidden
+                      className="flex h-10 w-[58px] items-center justify-center rounded-[12px] bg-white/80 text-[10px] font-bold tracking-wide text-brand-deep"
+                    >
+                      {card}
+                    </span>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerGroup>
             </div>
           </div>
         </div>
